@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meals/providers/favorites_provider.dart';
 import 'package:meals/screens/categories.dart';
 import 'package:meals/screens/filters.dart';
 import 'package:meals/screens/meals.dart';
@@ -23,15 +24,10 @@ class TabsScreen extends ConsumerStatefulWidget {
 
 class _TabsScreenState extends ConsumerState<TabsScreen> {
   int _selectedPageIndex = 0;
-  final List<Meal> _favoriteMeals = [];
+
   Map<Filter, bool> _selectedFilters = kInitialFilters;
 
-  void _showInfoMessage(String message) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
-  }
+  
 
   void _setScreen(String identifier) async {
     Navigator.of(context).pop();
@@ -53,25 +49,6 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
         });
       }
     }
-  }
-
-  void _toggleMealFavoriteStatus(Meal meal) {
-    final isExisting = isFavorite(meal);
-    if (isExisting) {
-      setState(() {
-        _favoriteMeals.remove(meal);
-      });
-      _showInfoMessage('Meal is not longer favorite!');
-    } else {
-      setState(() {
-        _favoriteMeals.add(meal);
-      });
-      _showInfoMessage('Meal has been added to favorite! ');
-    }
-  }
-
-  bool isFavorite(Meal meal) {
-    return _favoriteMeals.contains(meal);
   }
 
   void _selectPage(int index) {
@@ -103,16 +80,13 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
       return true;
     }).toList();
     Widget activePage = CategoriesScreen(
-      onToggleFavorite: _toggleMealFavoriteStatus,
-      isFavorite: isFavorite,
       avaliableMeals: _avaiableMeals,
     );
     var activePageTitle = 'Categories';
     if (_selectedPageIndex == 1) {
+      final favoriteMeal = ref.watch(favoriteMealProvider);
       activePage = MealsScreen(
-        meals: _favoriteMeals,
-        onToggleFavorite: _toggleMealFavoriteStatus,
-        isFavorite: isFavorite,
+        meals: favoriteMeal,
       );
       activePageTitle = 'Your Favorites';
     }
