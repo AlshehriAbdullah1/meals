@@ -12,37 +12,41 @@ class MealDetailsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final favoriteMeals = ref.watch(favoriteMealProvider);
+    final isFavorite = favoriteMeals.contains(meal);
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         title: Text('${meal.title}'),
         actions: [
           IconButton(
-              onPressed: () {
-                bool isAdded = ref
-                    .read(favoriteMealProvider.notifier)
-                    .toggleMealFavoriteStatus(meal);
+            onPressed: () {
+              bool isAdded = ref
+                  .read(favoriteMealProvider.notifier)
+                  .toggleMealFavoriteStatus(meal);
 
-                ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).clearSnackBars();
 
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                      isAdded ? 'Meal added  to favorite' : 'Meal removed'),
-                ));
-              },
-              icon: ref.read(favoriteMealProvider.notifier).isFav(meal)
-                  ? Icon(Icons.star)
-                  : Icon(Icons.star_outline))
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content:
+                    Text(isAdded ? 'Meal added  to favorite' : 'Meal removed'),
+              ));
+            },
+            icon: Icon(isFavorite ? Icons.star : Icons.star_outline),
+          )
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Image.network(
-              meal.imageUrl,
-              width: double.infinity,
-              height: 300,
-              fit: BoxFit.cover,
+            Hero(
+              tag: meal.id,
+              child: Image.network(
+                meal.imageUrl,
+                width: double.infinity,
+                height: 300,
+                fit: BoxFit.cover,
+              ),
             ),
             const SizedBox(
               height: 14,

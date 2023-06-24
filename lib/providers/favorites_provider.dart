@@ -19,9 +19,9 @@ class FavoriteMealsNotifier extends StateNotifier<List<Meal>> {
     return state.contains(meal);
   }
 
-  // Icon favoriteIcon(Meal meal) {
-  //   return Icon();
-  // }
+  Icon favoriteIcon(Meal meal) {
+    return Icon(Icons.face);
+  }
 }
 
 final favoriteMealProvider =
